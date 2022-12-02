@@ -32,15 +32,20 @@
   (is (play-round-score-equal :scissors :paper 9))
   (is (play-round-score-equal :scissors :scissors 6)))
 
-
-(deftest line-parse-tests
-  (is (= (parse-line "A X") [:rock :rock]))
-  (is (= (parse-line "B Y") [:paper :paper]))
-  (is (= (parse-line "C Z") [:scissors :scissors])))
-
 (deftest lines-parse-tests
-  (is (= (parse-lines ["A X" "B Z" "C Y"]) [[:rock :rock] [:paper :scissors] [:scissors :paper]])))
+  (is (= (parse-lines-naive ["A X" "B Z" "C Y"]) [[:rock :rock] [:paper :scissors] [:scissors :paper]])))
 
 (deftest compute-score-tests
   (is (= (compute-score-naive ["A Y"]) 8))
   (is (= (compute-score-naive ["A Y" "B X" "C Z"]) 15)))
+
+(deftest compute-my-hand-tests
+  (is (= (compute-hand :rock :draw) :rock))
+  (is (= (compute-hand :rock :win) :paper))
+  (is (= (compute-hand :rock :lose) :scissors)))
+
+(deftest lines-parse-with-results-tests
+  (is (= (parse-lines-results ["A X" "B Y" "C Z"]) [[:rock :lose] [:paper :draw] [:scissors :win]])))
+
+(deftest compute-hands-tests
+  (is (= (compute-hands [[:rock :lose] [:rock :draw] [:rock :win]]) [[:rock :scissors] [:rock :rock] [:rock :paper]])))
