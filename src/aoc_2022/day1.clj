@@ -2,17 +2,14 @@
   (:gen-class)
   (:require [aoc-2022.utils :as utils]))
 
-(defn group-separator? [element]
-  (= "" element))
-
 (defn grouped-by-calories [lines]
-  (filter #(not= '("") %) (partition-by group-separator? lines)))
+  (filter #(not= '("") %) (partition-by #(= "" %) lines)))
 
-(defn to-int [string]
-  (Integer/parseInt string))
+(defn to-int [groups]
+  (map #(map (fn [x] (Integer/parseInt x)) %) groups))
 
 (defn calories-groups [lines]
-  (map #(map to-int %) (grouped-by-calories lines)))
+  (to-int (grouped-by-calories lines)))
 
 (defn sum-groups [grouped]
   (map #(reduce + 0 %) grouped))
