@@ -1,5 +1,6 @@
 (ns aoc-2022.day2
-  (:gen-class))
+  (:gen-class)
+  (:require [aoc-2022.utils :as utils]))
 
 ; round logic
 (def outcomes
@@ -74,15 +75,10 @@
 (defn compute-score-part-2 [lines]
   (compute-score lines map-outcome-to-hand))
 
-; reading input
-(def input-file "./resources/day2/input")
-
-(defn lines []
-  (clojure.string/split-lines (slurp input-file)))
 
 (defn -main
   "Day 2"
   [& _]
-  (let [all-lines (lines)]
-    (println (str "my score: " (compute-score-part-1 all-lines)))
-    (println (str "second algo: " (compute-score-part-2 all-lines)))))
+  (let [lines (utils/file-lines "./resources/day2/input")]
+    (println (str "my score: " (compute-score-part-1 lines)))
+    (println (str "second algo: " (compute-score-part-2 lines)))))

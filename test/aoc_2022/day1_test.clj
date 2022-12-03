@@ -1,14 +1,10 @@
 (ns aoc-2022.day1-test
-  (:require [clojure.test :refer :all]
-            [aoc-2022.day1 :refer :all]))
+  (:require [aoc-2022.day1 :refer :all]
+            [clojure.test :refer :all]))
 
 (deftest grouping-tests
-  (is (= (grouped-by-calories ["1"]) [["1"]]))
-  (is (= (grouped-by-calories ["1" "2" "" "3"]) [["1" "2"] ["3"]])))
-
-(deftest to-numbers-tests
-  (is (= (to-numbers [["1"]]) [[1]]))
-  (is (= (to-numbers [["1" "2" "3"] ["5"]]) [[1 2 3] [5]])))
+  (is (= (calories-groups ["1"]) [[1]]))
+  (is (= (calories-groups ["1" "2" "" "3"]) [[1 2] [3]])))
 
 (deftest summation-tests
   (is (= (sum-groups [[1]]) [1]))

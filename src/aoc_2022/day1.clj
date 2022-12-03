@@ -1,28 +1,24 @@
 (ns aoc-2022.day1
-  (:gen-class))
+  (:gen-class)
+  (:require [aoc-2022.utils :as utils]))
 
-(def input-file "./resources/day1/input")
-
-(defn group-calories [lines]
-  (partition-by #(= "" %) lines))
+(defn group-separator? [element]
+  (= "" element))
 
 (defn grouped-by-calories [lines]
-  (filter #(not= '("") %) (group-calories lines)))
+  (filter #(not= '("") %) (partition-by group-separator? lines)))
 
-(defn to-numbers [groups]
-  (map #(map (fn [x] (Integer/parseInt x)) %) groups))
+(defn to-int [string]
+  (Integer/parseInt string))
+
+(defn calories-groups [lines]
+  (map #(map to-int %) (grouped-by-calories lines)))
 
 (defn sum-groups [grouped]
   (map #(reduce + 0 %) grouped))
 
-(defn file-lines [file-name]
-  (clojure.string/split-lines (slurp file-name)))
-
 (defn sort-desc [coll]
   (reverse (sort coll)))
-
-(defn elfs []
-  (-> input-file file-lines grouped-by-calories to-numbers sum-groups sort-desc))
 
 (defn first-elf [elfs]
   (first elfs))
@@ -33,7 +29,6 @@
 (defn -main
   "Day 1"
   [& _]
-  (let [elfs (elfs)]
+  (let [elfs (-> (utils/file-lines "./resources/day1/input") calories-groups sum-groups sort-desc)]
     (println (str "Highest elf: " (first-elf elfs)))
     (println (str "first three: " (first-three-elfs-sum elfs)))))
-
