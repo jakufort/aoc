@@ -2,50 +2,44 @@
   (:gen-class))
 
 ; round logic
-(defn hand-points [hand]
-  (case hand
-    :rock 1
-    :paper 2
-    :scissors 3))
+(def outcomes
+  {:rock     {:rock :draw
+              :paper    :win
+              :scissors :lose}
+   :paper    {:paper :draw
+              :scissors :win
+              :rock     :lose}
+   :scissors {:scissors :draw
+              :rock  :win
+              :paper :lose}})
+(def hand-score
+  {:rock     1
+   :paper    2
+   :scissors 3})
+(def outcome-score
+  {:win  6
+   :draw 3
+   :lose 0})
 
-(defn round-score [me opponent]
-  (if (= me opponent)
-    3
-    (case me
-      :rock (case opponent
-              :paper 0
-              :scissors 6)
-      :paper (case opponent
-               :rock 6
-               :scissors 0)
-      :scissors (case opponent
-                  :rock 0
-                  :paper 6))))
-
-(defn play-round [me opponent]
-  (+ (round-score me opponent) (hand-points me)))
+(defn single-game-score [[opponent me]]
+  (+ (outcome-score ((outcomes opponent) me)) (hand-score me)))
 
 ; computing hand
-(defn compute-hand [opponent desired-result]
-  (if (= desired-result :draw)
-    opponent
-    (case desired-result
-      :win (case opponent
-             :rock :paper
-             :paper :scissors
-             :scissors :rock)
-      :lose (case opponent
-              :rock :scissors
-              :paper :rock
-              :scissors :paper))))
+(defn outcome-matches? [[_ outcome] wanted-outcome]
+  (= outcome wanted-outcome))
 
-(defn compute-hands [pairs-coll]
-  (map (fn [pair]
-         (let [opponent (first pair)]
-           (vector opponent (compute-hand opponent (second pair))))) pairs-coll))
+(defn matching-outcome [outcomes wanted-outcome]
+  (first (filter #(outcome-matches? % wanted-outcome) outcomes)))
+
+(defn hand-to-play [opponent outcome]
+  (first (matching-outcome (outcomes opponent) outcome)))
+
+(defn compute-round [pair]
+  (let [[opponent outcome] pair]
+    (vector opponent (hand-to-play opponent outcome))))
 
 
-; mappings
+; parsing strings
 (def opponent-mapping {"A" :rock
                        "B" :paper
                        "C" :scissors})
@@ -56,28 +50,26 @@
                    "Y" :draw
                    "Z" :win})
 
-; parsing strings
 (defn parse-line [line columns-mapping]
   (map #(get columns-mapping %) (clojure.string/split line #" ")))
 
 (defn parse-lines [lines columns-mapping]
   (map #(parse-line % columns-mapping) lines))
 
-(defn parse-lines-naive [lines]
-  (parse-lines lines (merge opponent-mapping me-simple-mapping)))
-
-(defn parse-lines-results [lines]
-  (parse-lines lines (merge opponent-mapping me-to-result)))
 
 ; computing scores
 (defn compute-score [games]
-  (reduce + (map #(play-round (second %) (first %)) games)))
+  (reduce + (map single-game-score games)))
+
+(def naive-mapping (merge opponent-mapping me-simple-mapping))
+
+(def desired-results-mapping (merge opponent-mapping me-to-result))
 
 (defn compute-score-naive [lines]
-  (compute-score (parse-lines-naive lines)))
+  (compute-score (parse-lines lines naive-mapping)))
 
 (defn compute-score-choose-hand [lines]
-  (compute-score (compute-hands (parse-lines-results lines))))
+  (compute-score (map compute-round (parse-lines lines desired-results-mapping))))
 
 
 ; reading input
