@@ -25,12 +25,26 @@
 (defn priority [character]
   (- (int character) (offset character)))
 
+; part 2
+(defn three-elf-groups [lines]
+  (partition 3 lines))
+
+(defn find-badge [[fst snd thr]]
+  (first (intersection (set fst) (set snd) (set thr))))
+
 ; solutions
+(defn sum-priorities [characters]
+  (reduce + (map priority characters)))
+
 (defn item-in-both-compartments-priorities [lines]
-  (reduce + (map priority (map common-item lines))))
+  (sum-priorities (map common-item lines)))
+
+(defn badges-priority [lines]
+  (sum-priorities (map find-badge (three-elf-groups lines))))
 
 (defn -main
   "Day 3"
   [& _]
   (let [lines (utils/file-lines "./resources/day3/input")]
-    (println (str "part1: " (item-in-both-compartments-priorities lines)))))
+    (println (str "part1: " (item-in-both-compartments-priorities lines)))
+    (println (str "part2: " (badges-priority lines)))))

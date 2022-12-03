@@ -32,3 +32,13 @@
         (item-in-both-compartments-priorities ["vJrwpWtwJgWrhcsFMMfFFhFp" "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL"])
         54)))
 
+(deftest elfs-groups-tests
+  (is (= (three-elf-groups ["a" "b" "c" "d" "e" "f"]) [["a" "b" "c"] ["d" "e" "f"]])))
+
+(deftest find-badge-tests
+  (is (= (find-badge ["ab" "ac" "ad"]) \a)))
+
+(deftest badges-priority-tests
+  (is (=
+        (badges-priority ["vJrwpWtwJgWrhcsFMMfFFhFp" "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL" "PmmdzqPrVvPwwTWBwg"])
+        18)))
