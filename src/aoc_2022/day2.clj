@@ -3,15 +3,15 @@
 
 ; round logic
 (def outcomes
-  {:rock     {:rock :draw
+  {:rock     {:rock     :draw
               :paper    :win
               :scissors :lose}
-   :paper    {:paper :draw
+   :paper    {:paper    :draw
               :scissors :win
               :rock     :lose}
    :scissors {:scissors :draw
-              :rock  :win
-              :paper :lose}})
+              :rock     :win
+              :paper    :lose}})
 (def hand-score
   {:rock     1
    :paper    2
@@ -34,43 +34,45 @@
 (defn hand-to-play [opponent outcome]
   (first (matching-outcome (outcomes opponent) outcome)))
 
-(defn compute-round [pair]
-  (let [[opponent outcome] pair]
-    (vector opponent (hand-to-play opponent outcome))))
-
-
 ; parsing strings
-(def opponent-mapping {"A" :rock
-                       "B" :paper
-                       "C" :scissors})
-(def me-simple-mapping {"X" :rock
-                        "Y" :paper
-                        "Z" :scissors})
-(def me-to-result {"X" :lose
-                   "Y" :draw
-                   "Z" :win})
+(defn columns [line]
+  (clojure.string/split line #" "))
 
-(defn parse-line [line columns-mapping]
-  (map #(get columns-mapping %) (clojure.string/split line #" ")))
+(def opponent-mapping
+  {"A" :rock
+   "B" :paper
+   "C" :scissors})
+(defn parse-line [line snd-column-mapping]
+  (let [[opponent-action me] (columns line)
+        opponent (opponent-mapping opponent-action)]
+    (vector opponent (snd-column-mapping opponent me))))
 
-(defn parse-lines [lines columns-mapping]
-  (map #(parse-line % columns-mapping) lines))
+(defn parse-lines [lines snd-column-mapper]
+  (map #(parse-line % snd-column-mapper) lines))
 
+(def hand-mapping
+  {"X" :rock
+   "Y" :paper
+   "Z" :scissors})
+(defn map-to-hand [_ me]
+  (hand-mapping me))
+
+(def outcome-mapping
+  {"X" :lose
+   "Y" :draw
+   "Z" :win})
+(defn map-outcome-to-hand [opponent me]
+  (hand-to-play opponent (outcome-mapping me)))
 
 ; computing scores
-(defn compute-score [games]
-  (reduce + (map single-game-score games)))
+(defn compute-score [lines mapper]
+  (reduce + (map single-game-score (parse-lines lines mapper))))
 
-(def naive-mapping (merge opponent-mapping me-simple-mapping))
+(defn compute-score-part-1 [lines]
+  (compute-score lines map-to-hand))
 
-(def desired-results-mapping (merge opponent-mapping me-to-result))
-
-(defn compute-score-naive [lines]
-  (compute-score (parse-lines lines naive-mapping)))
-
-(defn compute-score-choose-hand [lines]
-  (compute-score (map compute-round (parse-lines lines desired-results-mapping))))
-
+(defn compute-score-part-2 [lines]
+  (compute-score lines map-outcome-to-hand))
 
 ; reading input
 (def input-file "./resources/day2/input")
@@ -81,5 +83,6 @@
 (defn -main
   "Day 2"
   [& _]
-  (println (str "my score: " (compute-score-naive (lines))))
-  (println (str "second algo: " (compute-score-choose-hand (lines)))))
+  (let [all-lines (lines)]
+    (println (str "my score: " (compute-score-part-1 all-lines)))
+    (println (str "second algo: " (compute-score-part-2 all-lines)))))
