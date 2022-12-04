@@ -32,7 +32,7 @@
         (item-in-both-compartments-priorities ["vJrwpWtwJgWrhcsFMMfFFhFp" "jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL"])
         54)))
 
-(deftest elfs-groups-tests
+(deftest elves-groups-tests
   (is (= (three-elf-groups ["a" "b" "c" "d" "e" "f"]) [["a" "b" "c"] ["d" "e" "f"]])))
 
 (deftest find-badge-tests

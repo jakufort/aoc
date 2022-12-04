@@ -17,15 +17,15 @@
 (defn sort-desc [coll]
   (reverse (sort coll)))
 
-(defn first-elf [elfs]
-  (first elfs))
+(defn first-elf [elves]
+  (first elves))
 
-(defn first-three-elfs-sum [elfs]
-  (reduce + (take 3 elfs)))
+(defn first-three-elves-sum [elves]
+  (reduce + (take 3 elves)))
 
 (defn -main
   "Day 1"
   [& _]
-  (let [elfs (-> (utils/file-lines "./resources/day1/input") calories-groups sum-groups sort-desc)]
-    (println (str "Highest elf: " (first-elf elfs)))
-    (println (str "first three: " (first-three-elfs-sum elfs)))))
+  (let [elves (-> (utils/file-lines "./resources/day1/input") calories-groups sum-groups sort-desc)]
+    (println (str "Highest elf: " (first-elf elves)))
+    (println (str "first three: " (first-three-elves-sum elves)))))

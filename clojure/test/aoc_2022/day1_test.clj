@@ -18,5 +18,5 @@
 (deftest elfs-tests
   (is (= (first-elf [1]) 1))
   (is (= (first-elf [4 3 1]) 4))
-  (is (= (first-three-elfs-sum [3 2 1]) 6))
-  (is (= (first-three-elfs-sum [10 4 3 2 2 1]) 17)))
+  (is (= (first-three-elves-sum [3 2 1]) 6))
+  (is (= (first-three-elves-sum [10 4 3 2 2 1]) 17)))
