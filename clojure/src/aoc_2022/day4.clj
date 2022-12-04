@@ -19,23 +19,28 @@
   (pair-to-range (clojure.string/split line #",")))
 
 ; overlap
-(defn overlap [[[left-low left-high] [right-low right-high]]]
-  (or
-    (and (>= left-low right-low) (<= left-high right-high))
-    (and (<= left-low right-low) (>= left-high right-high))))
+(defn in-range [low up to-check]
+  (and (<= low to-check) (>= up to-check)))
 
-(defn partial-overlap [[[left-low left-high] [right-low right-high]]]
+(defn overlap [[[ll lh] [rl rh]]]
   (or
-    (and (>= left-high right-low) (not (> left-low right-high)))
-    (and (>= right-high left-low) (not (< left-high right-low)))))
+    (and (in-range ll lh rl) (in-range ll lh rh))
+    (and (in-range rl rh ll) (in-range rl rh lh))))
 
+(defn partial-overlap [[[ll lh] [rl rh]]]
+  (or
+    (and (in-range ll lh rl) (not (> ll rh)))
+    (and (in-range rl rh ll) (not (< lh rl)))))
 
 ; solution
+(defn count-overlaps [lines overlap?]
+  (count (filter overlap? (map line-into-range lines))))
+
 (defn part-1 [lines]
-  (count (filter overlap (map line-into-range lines))))
+  (count-overlaps lines overlap))
 
 (defn part-2 [lines]
-  (count (filter partial-overlap (map line-into-range lines))))
+  (count-overlaps lines partial-overlap))
 
 (defn -main
   "Day 4"
