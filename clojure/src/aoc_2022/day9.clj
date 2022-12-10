@@ -4,7 +4,7 @@
 
 ; input parsing
 (defn parse-move [line]
-  (let [[direction amount-str] (clojure.string/split line #" ")
+  (let [[direction amount-str] (utils/split-space line)
         amount (Integer/parseInt amount-str)]
     [direction amount]))
 

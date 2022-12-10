@@ -2,11 +2,8 @@
   (:gen-class)
   (:require [aoc-2022.utils :as utils]))
 
-(defn split-space [line]
-  (clojure.string/split line #" "))
-
 (defn split-space-second [line]
-  (second (split-space line)))
+  (second (utils/split-space line)))
 
 ; building filesystem
 (defmulti exec-cmd
@@ -38,7 +35,7 @@
       (if (contains? fs dir-path)
         fs
         (assoc-in fs dir-path {})))
-    (let [[size name] (split-space file-line)]
+    (let [[size name] (utils/split-space file-line)]
       (assoc-in fs (conj path name) (Integer/parseInt size)))))
 
 (defmethod exec-cmd "ls" [fs path lines]

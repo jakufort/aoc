@@ -36,15 +36,12 @@
   (first (matching-outcome (outcomes opponent) outcome)))
 
 ; parsing strings
-(defn columns [line]
-  (clojure.string/split line #" "))
-
 (def opponent-mapping
   {"A" :rock
    "B" :paper
    "C" :scissors})
 (defn parse-line [line snd-column-mapping]
-  (let [[opponent-action me] (columns line)
+  (let [[opponent-action me] (utils/split-space line)
         opponent (opponent-mapping opponent-action)]
     (vector opponent (snd-column-mapping opponent me))))
 

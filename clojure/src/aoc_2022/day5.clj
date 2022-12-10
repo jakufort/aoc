@@ -25,7 +25,7 @@
 
 ; movements
 (defn parse-move [line]
-  (map #(Integer/parseInt %) (take-nth 2 (drop 1 (clojure.string/split line #" ")))))
+  (map #(Integer/parseInt %) (take-nth 2 (drop 1 (utils/split-space line)))))
 
 (defn parse-moves [move-lines]
   (map parse-move move-lines))
