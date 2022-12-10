@@ -30,33 +30,55 @@
 (defn reg-value [[[_ _ _ reg] _]]
   reg)
 
+(defn cpu-cycle [[[_ _ c _] _]]
+  c)
+
+; part 1
 (defn signal-strengths [cycles-to-check cmds]
-  (loop [cycle 0
-         execution-state [[nil nil 0 1] cmds]
+  (loop [state [[nil nil 0 1] cmds]
          left-to-check cycles-to-check
          strengths []]
     (if (empty? left-to-check)
       strengths
-      (let [new-cycle (inc cycle)
-            new-state (do-cycle execution-state)]
+      (let [new-cycle (inc (cpu-cycle state))
+            new-state (do-cycle state)]
         (if (some #(= % new-cycle) left-to-check)
           ; assumes that cycles-to-check is ordered list
-          (recur new-cycle new-state (rest left-to-check) (conj strengths [new-cycle (reg-value execution-state)]))
-          (recur new-cycle new-state left-to-check strengths))))))
+          (recur new-state (rest left-to-check) (conj strengths [new-cycle (reg-value state)]))
+          (recur new-state left-to-check strengths))))))
 
 (defn sum-strengths [strengths]
   (reduce + 0 (map #(* (first %) (second %)) strengths)))
 
-; part 1
 (defn part-1 [lines]
   (let [cmds (map parse-line lines)
         strengths (signal-strengths [20 60 100 140 180 220] cmds)]
-    (println strengths)
     (sum-strengths strengths)))
 
 ; part 2
+(defn print? [crt-position reg-x]
+  (or (= (- reg-x 1) crt-position) (= (+ reg-x 1) crt-position) (= reg-x crt-position)))
+
+(defn render-point [crt-position reg-x]
+  (let [new-line (if (= 0 crt-position) "\n" "")]
+    (if (print? crt-position reg-x)
+      (str new-line "#")
+      (str new-line "."))))
+
+(defn render [cmds]
+  (loop [state [[nil nil 0 1] cmds]
+         display ""]
+    (let [current-cycle (cpu-cycle state)
+          crt-position (mod current-cycle 40)
+          reg-x (reg-value state)]
+      (if (>= current-cycle 240)
+        display
+        (recur (do-cycle state) (str display (render-point crt-position reg-x)))))))
+
+
 (defn part-2 [lines]
-  0)
+  (let [cmds (map parse-line lines)]
+    (render cmds)))
 
 (defn -main
   "Day 10"
