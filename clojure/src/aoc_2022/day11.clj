@@ -50,12 +50,11 @@
         (empty? line) (recur (rest left-lines) monkeys)
         (str/starts-with? line "Monkey") (let [[number monkey] (parse-monkey (take 6 left-lines))]
                                            (recur (drop 6 left-lines) (assoc monkeys number monkey)))))))
-; OPERATION can be "shortcircuted" - we care about "divisible" test, so we can reduce number size!
+
 ; simulation
 (defn process-item [item monkey coping-mechanism]
   (let [after-operation ((monkey :operation) item)
         im-coping (coping-mechanism after-operation)]
-
     [(get monkey (= 0 (mod im-coping (monkey :divisible-by)))) im-coping]))
 
 (defn turn [monkey coping-mechanism]
@@ -98,7 +97,6 @@
 (defn do-n-rounds [n monkeys coping-mechanism]
   (loop [counter 0
          [new-monkeys inspections] [monkeys (init-inspections monkeys)]]
-    (println counter)
     (if (= counter n)
       [new-monkeys inspections]
       (recur (inc counter) (round new-monkeys inspections coping-mechanism)))))
@@ -114,12 +112,18 @@
 (defn part-1 [lines]
   (monkey-business lines 20 item-not-broken-relief))
 
+(defn full-copium [least-common-denominator item]
+  (mod item least-common-denominator))
+
 (defn part-2 [lines]
-  (monkey-business lines 1000 (fn [x] x)))
+  (let [init-monkeys (read-monkeys lines)
+        lcd (reduce * 1 (map (fn [[_ v]] (get v :divisible-by)) init-monkeys))
+        [_ inspections] (do-n-rounds 10000 init-monkeys (partial full-copium lcd))]
+    (reduce * 1 (map second (take 2 (reverse (sort-by second (seq inspections))))))))
 
 (defn -main
   "Day 11"
   [& _]
   (let [lines (utils/file-lines "./resources/day11/input")]
-    ;(println (str "part1: " (part-1 lines)))
+    (println (str "part1: " (part-1 lines)))
     (println (str "part2: " (part-2 lines)))))
