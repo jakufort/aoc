@@ -62,8 +62,8 @@
 (defn render-point [crt-position reg-x]
   (let [new-line (if (= 0 crt-position) "\n" "")]
     (if (print? crt-position reg-x)
-      (str new-line "#")
-      (str new-line "."))))
+      (str new-line "▓")
+      (str new-line "░"))))
 
 (defn render [cmds]
   (loop [state [[nil nil 0 1] cmds]
