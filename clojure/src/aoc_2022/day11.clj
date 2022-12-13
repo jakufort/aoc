@@ -112,13 +112,13 @@
 (defn part-1 [lines]
   (monkey-business lines 20 item-not-broken-relief))
 
-(defn full-copium [least-common-denominator item]
-  (mod item least-common-denominator))
+(defn full-copium [max-worry-level item]
+  (mod item max-worry-level))
 
 (defn part-2 [lines]
   (let [init-monkeys (read-monkeys lines)
-        lcd (reduce * 1 (map (fn [[_ v]] (get v :divisible-by)) init-monkeys))
-        [_ inspections] (do-n-rounds 10000 init-monkeys (partial full-copium lcd))]
+        max-worry-level (reduce * 1 (map (fn [[_ v]] (get v :divisible-by)) init-monkeys))
+        [_ inspections] (do-n-rounds 10000 init-monkeys (partial full-copium max-worry-level))]
     (reduce * 1 (map second (take 2 (reverse (sort-by second (seq inspections))))))))
 
 (defn -main
