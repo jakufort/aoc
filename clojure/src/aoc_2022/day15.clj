@@ -1,7 +1,6 @@
 (ns aoc-2022.day15
   (:gen-class)
-  (:require [aoc-2022.utils :as utils]
-            [clojure.set :refer [union]]))
+  (:require [aoc-2022.utils :as utils]))
 
 ; parsing
 (defn clean-up [line]
@@ -35,19 +34,41 @@
         distance-to-line (distance sy line)]
     (if (>= sensor-range distance-to-line)
       (let [range-half-in-line (- sensor-range distance-to-line)
-            x-values (range (- sx range-half-in-line) (+ sx range-half-in-line))]
-        (set (map (fn [x] [x line]) x-values)))
-      #{})))
+            covered-range [(- sx range-half-in-line) (+ sx range-half-in-line)]]
+        covered-range)
+      [])))
+
+(defn sum-range [[ll lh :as left] [rl rh :as right]]
+  ; assuming that ll <= rl
+  (if (empty? left)
+    [right]
+    (cond
+      (> rl lh) [left right]
+      (and (< ll rl) (> lh rh)) [left]
+      (<= rl lh) [[ll rh]])))
+
+(defn sum-ranges [ranges]
+  (let [sorted (filter #(not (empty? %)) (sort-by first ranges))]
+    (reduce
+      (fn [acc r]
+        (let [sum (sum-range (last acc) r)]
+          ; won't work when ranges are discontinuous
+          sum))
+      []
+      sorted)))
+
+(defn count-covered [ranges]
+  (reduce (fn [acc [l r]] (+ acc (- r l))) 0 ranges))
 
 (defn already-covered-in-line [all-sensors line]
   (let [from-sensors (map #(covered-points % line) all-sensors)
-        result (reduce union #{} from-sensors)]
-    result))
+        ranges (sum-ranges from-sensors)]
+    (count-covered ranges)))
 
 (defn part-1 [lines]
   (let [sensors (sensors lines)
-        covered (already-covered-in-line sensors 2000000)]
-    (count covered)))
+        count (already-covered-in-line sensors 2000000)]
+    count))
 
 
 (defn part-2 [_]

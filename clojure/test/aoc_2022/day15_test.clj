@@ -15,4 +15,4 @@
   (is (= (sensor-range [8 7] [2 10]) 9)))
 
 (deftest already-covered-tests
-  (is (= (count (already-covered-in-line test-sensors 10)) 26)))
+  (is (= (already-covered-in-line test-sensors 10)) 26))
