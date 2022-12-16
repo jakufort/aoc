@@ -15,4 +15,10 @@
   (is (= (sensor-range [8 7] [2 10]) 9)))
 
 (deftest already-covered-tests
-  (is (= (already-covered-in-line test-sensors 10)) 26))
+  (is (= (count-covered (already-covered-in-line test-sensors 10))) 26))
+
+(deftest find-beacon-tests
+  (is (= (find-beacon-position-brute-force test-sensors 20) [14 11])))
+
+(deftest tuning-frequency-tests
+  (is (= (tuning-frequency test-sensors 20) 56000011)))
