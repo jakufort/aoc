@@ -1,6 +1,7 @@
 (ns aoc-2022.day18
   (:gen-class)
-  (:require [aoc-2022.utils :as utils]))
+  (:require [aoc-2022.utils :as utils]
+            [clojure.set :refer [union]]))
 
 (defn cube [line]
   (map #(Integer/parseInt %) (clojure.string/split line #",")))
@@ -24,8 +25,26 @@
 (defn part-1 [lines]
   (surface-count (read-cubes lines)))
 
+(defn boundary [cubes]
+  (loop [seen #{}
+         todo #{[-1 -1 -1]}]
+    (let [here (first todo)]
+      (if (nil? here)
+        seen
+        (let [new-todo (rest todo)
+              neigh (neighbours here)
+              not-seen (filter #(not (contains? seen %)) neigh)
+              not-in-cubes (filter #(not (contains? cubes %)) not-seen)
+              ; assumes that cubes are in range of 0-25
+              in-boundary (filter (fn [x] (every? #(and (>= % -1) (<= % 25)) x)) not-in-cubes)]
+          (recur (union seen #{here}) (union new-todo in-boundary)))))))
+
 (defn part-2 [lines]
-  0)
+  (let [cubes (read-cubes lines)
+        boundary (boundary cubes)
+        neighbours (map neighbours cubes)
+        only-on-boundary (map #(filter (fn [x] (contains? boundary x)) %) neighbours)]
+    (reduce + 0 (map count only-on-boundary))))
 
 (defn -main
   "Day 18"
