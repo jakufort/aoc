@@ -1,2 +1,2 @@
-clojure/resources/*/** filter=git-crypt diff=git-crypt
-rust/resources/*/** filter=git-crypt diff=git-crypt
+2022/clojure/resources/*/** filter=git-crypt diff=git-crypt
+2022/rust/resources/*/** filter=git-crypt diff=git-crypt
