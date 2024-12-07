@@ -1,9 +1,0 @@
-task default: %w[run]
-
-task :run do
-  ruby 'src/day1.rb'
-end
-
-task :test do
-  ruby 'test/day1_test.rb'
-end
